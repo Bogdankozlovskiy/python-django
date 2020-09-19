@@ -28,7 +28,7 @@ class Book(models.Model):
     slug = models.SlugField(unique=True, verbose_name="Слаг")
     text = models.TextField(verbose_name="текст")
     author = models.ManyToManyField(User, verbose_name="автор", db_index=True)
-    publish_date = models.DateField(auto_now_add=True)
+    publish_date = models.DateField(auto_now_add=True, verbose_name="дата публикации")
     genre = models.ManyToManyField("managebook.Genre", verbose_name="жанр")
     rate = models.ManyToManyField(User, through="managebook.BookRate", related_name="user")
     cached_rate = models.DecimalField(max_digits=3, decimal_places=2, default=0.0)
