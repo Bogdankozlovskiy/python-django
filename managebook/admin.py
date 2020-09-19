@@ -5,9 +5,9 @@ from managebook.models import Book, Genre
 class BookAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
     list_display = "title", "publish_date"
-    search_fields = "title"
+    search_fields = ("title", )
     list_filter = 'publish_date', "author", "genre"
-    readonly_fields = 'cached_rate'
+    readonly_fields = ('cached_rate', )
 
 
 admin.site.register(Book, BookAdmin)
