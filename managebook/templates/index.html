@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>.checked {color: orange;}</style>
 </head>
 <body>
 <div class="container">
@@ -21,7 +22,11 @@
     {% endfor %}</i>
     <h4>Rate: {{ book.cached_rate }}</h4>
     {% for i in '12345'|make_list %}
-        <a href="{% url 'add_rate' id=book.id rate=i %}"><span class="fa fa-star">{{ i }}</span></a>
+        {% if book.user_rate == i %}
+            <a href="{% url 'add_rate' id=book.id rate=i %}"><span class="fa fa-star checked">{{ i }}</span></a>
+        {% else %}
+            <a href="{% url 'add_rate' id=book.id rate=i %}"><span class="fa fa-star">{{ i }}</span></a>
+        {% endif %}
     {% endfor %}
     {% for comment in book.comment.all %}
         <h6>{{ comment.text }}</h6>
