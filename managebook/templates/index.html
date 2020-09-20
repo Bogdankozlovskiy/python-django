@@ -3,16 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
-<h1>hello {{ user }} {{ digit }}  !!!</h1>
-
-{% for letter in user %}
-{% if letter == 'o' %}
-    <h3>{{ letter }}</h3>
-{% else %}
-    <h1>{{ letter }}</h1>
-{% endif %}
+<div class="container">
+{% for book in content %}
+    <h1>{{ book.title }}</h1>
+    <h2>{{ book.publish_date }}</h2>
+    <i><h5>{{ book.text }}</h5></i>
+    <i>Genre: {% for genre in book.genre.all %}
+        {{ genre.title }}
+    {% endfor %}</i><br>
+    <i>Authors:{% for user in book.author.all %}
+        {{ user.username }}
+    {% endfor %}</i>
+    <h4>Rate: {{ book.cached_rate }}</h4>
+    {% for i in '12345'|make_list %}
+        <a href="{% url 'add_rate' id=book.id rate=i %}"><span class="fa fa-star">{{ i }}</span></a>
+    {% endfor %}
+    {% for comment in book.comment.all %}
+        <h6>{{ comment.text }}</h6>
+        <h6>User: {{ comment.user }}</h6>
+        <h6>Date: {{ comment.date }}</h6>
+        <h6><a href="{% url 'add_comment' id=comment.id %}">Likes: {{ comment.cached_likes }}</a></h6><br>
+    {% endfor %}
+<hr>
 {% endfor %}
+</div>
 </body>
 </html>

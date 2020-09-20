@@ -1,10 +1,21 @@
-from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from managebook.models import Book, BookRate, CommentLike
+from django.views.generic import View
 
 
-# def hello(request):
-#     return HttpResponse("<h1>Hello world</h1>")
+class HelloView(View):
+    def get(self, request):
+        response = {"content": Book.objects.prefetch_related('genre', 'author', 'comment__user').all()}
+        return render(request, "index.html", response)
 
-def hello(request):
-    response = {"user": "Bogdan", "digit": 34.5}
-    return render(request, "index.html", response)
+
+class AddComment(View):
+    def get(self, request, id):
+        CommentLike.objects.create(user_id=request.user.id, comment_id=id)
+        return redirect("hello")
+
+
+class AddRate(View):
+    def get(self, request, id, rate):
+        BookRate.objects.create(user_id=request.user.id, book_id=id, rate=rate)
+        return redirect("hello")
