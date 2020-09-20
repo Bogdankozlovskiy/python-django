@@ -60,7 +60,9 @@ class BookRate(models.Model):
         try:
             super().save(*args, **kwargs)
         except IntegrityError:
-            pass
+            br = BookRate.objects.get(user=self.user, book=self.book)
+            br.rate = self.rate
+            br.save()
         else:
             self.book.cached_rate = self.book.book_like.aggregate(avg_rate=Avg("rate"))['avg_rate']
             self.book.save()
@@ -77,7 +79,9 @@ class CommentLike(models.Model):
         try:
             super().save(*args, **kwargs)
         except IntegrityError:
-            pass
+            CommentLike.objects.get(user=self.user, comment=self.comment).delete()
+            self.comment.cached_likes -= 1
+            self.comment.save()
         else:
             self.comment.cached_likes += 1
             self.comment.save()
