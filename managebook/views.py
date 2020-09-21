@@ -9,13 +9,14 @@ class HelloView(View):
     def get(self, request):
         if request.user.id:
             q = Q(book_like__user_id=request.user.id)
-            sub_query = Book.objects.filter(~q).annotate(user_rate=Value(0, CharField()))
+            sub_query = Book.objects.filter(~q).annotate(user_rate=Value(0, CharField())) \
+                .prefetch_related('genre', 'author', 'comment__user')
             query = Book.objects.filter(q) \
                 .annotate(user_rate=Cast("book_like__rate", CharField())) \
                 .prefetch_related('genre', 'author', 'comment__user') \
-                .union(sub_query).all()
+                .union(sub_query)
         else:
-            query = Book.objects.prefetch_related('genre', 'author', 'comment__user').all()
+            query = Book.objects.prefetch_related('genre', 'author', 'comment__user')
         return render(request, "index.html", {"content": query})
 
 
