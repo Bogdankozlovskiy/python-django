@@ -3,6 +3,9 @@ from managebook.models import Book, BookRate, CommentLike
 from django.views.generic import View
 from django.db.models import F, CharField, Value, Q, Case, When
 from django.db.models.functions import Cast
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import logout, authenticate, login
+from django.contrib import messages
 
 
 class HelloView(View):
@@ -33,3 +36,39 @@ class AddRate(View):
         if request.user.id:
             BookRate.objects.create(user_id=request.user.id, book_id=id, rate=rate)
         return redirect("hello")
+
+
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        return redirect('hello')
+
+
+class LoginView(View):
+    def get(self, request):
+        form = AuthenticationForm()
+        return render(request, 'login.html', {'form': form})
+
+    def post(self, request):
+        form = AuthenticationForm(request=request, data=request.POST)
+        if form.is_valid():
+            login(request, form.get_user())
+        else:
+            messages.error(request, "password or login is uncorrected")
+            return redirect('login')
+        return redirect('hello')
+
+
+class RegisterView(View):
+    def get(self, request):
+        form = UserCreationForm()
+        return render(request, 'register.html', {'form': form})
+
+    def post(self, request):
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+        else:
+            messages.error(request, "this login already exists")
+            return redirect('register')
+        return redirect('hello')

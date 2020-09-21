@@ -1,0 +1,18 @@
+{% extends 'main_template.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block login %}
+
+{% for msg in messages %}
+<li class="{{ msg.tags }}">{{ msg }}</li>
+{% endfor %}
+<form action="{% url 'login' %}" method="post">
+    {% csrf_token %}
+    <h2>{{ form.username.label }}</h2>
+    {{ form.username }}
+    <h2>{{ form.password.label }}</h2>
+    {{ form.password }}
+    <button type="submit">ok</button>
+</form>
+{% endblock %}
