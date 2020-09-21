@@ -46,6 +46,9 @@ class Comment(models.Model):
     book: Book = models.ForeignKey(Book, on_delete=models.CASCADE, verbose_name="Книга", related_name="comment")
     like = models.ManyToManyField(User, through='managebook.CommentLike', related_name="liked_comment")
     cached_likes: int = models.PositiveIntegerField(default=0)
+    
+    def __str__(self):
+        return self.text
 
 
 class BookRate(models.Model):
