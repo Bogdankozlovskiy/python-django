@@ -10,7 +10,7 @@ from django.contrib import messages
 
 class HelloView(View):
     def get(self, request):
-        if request.user.id:
+        if request.user.is_authenticated:
             q = Q(book_like__user_id=request.user.id)
             sub_query = Book.objects.filter(~q) \
                 .annotate(user_rate=Value(0, CharField())) \
@@ -26,14 +26,14 @@ class HelloView(View):
 
 class AddComment(View):
     def get(self, request, id):
-        if request.user.id:
+        if request.user.is_authenticated:
             CommentLike.objects.create(user_id=request.user.id, comment_id=id)
         return redirect("hello")
 
 
 class AddRate(View):
     def get(self, request, id, rate):
-        if request.user.id:
+        if request.user.is_authenticated:
             BookRate.objects.create(user_id=request.user.id, book_id=id, rate=rate)
         return redirect("hello")
 
