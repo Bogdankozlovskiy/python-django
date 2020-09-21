@@ -47,7 +47,7 @@ class Comment(models.Model):
     cached_likes: int = models.PositiveIntegerField(default=0)
     
     def __str__(self):
-        return self.text
+        return self.text[:25] + "..."
 
 
 class BookRate(models.Model):
