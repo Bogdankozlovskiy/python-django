@@ -1,0 +1,9 @@
+{% extends 'main_template.html' %}
+
+{% block update_book %}
+<form action="{% url 'update_book' id=id %}" method="post">
+    {% csrf_token %}
+    {{ book_form }}
+    <button class="btn btn-primary" type="submit">OK</button>
+</form>
+{% endblock %}

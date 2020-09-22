@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect
+from pytils.translit import slugify
+from managebook.forms import CommentForm, BookForm
 from managebook.models import Book, BookRate, CommentLike
 from django.views.generic import View
 from django.db.models import F, CharField, Value, Q, Case, When
@@ -21,10 +23,10 @@ class HelloView(View):
                 .union(sub_query)
         else:
             query = Book.objects.prefetch_related('genre', 'author', 'comment__user')
-        return render(request, "index.html", {"content": query})
+        return render(request, "index.html", {"content": query, "comment_form": CommentForm()})
 
 
-class AddComment(View):
+class AddCommentLike(View):
     def get(self, request, id):
         if request.user.is_authenticated:
             CommentLike.objects.create(user_id=request.user.id, comment_id=id)
@@ -71,4 +73,44 @@ class RegisterView(View):
         else:
             messages.error(request, "this login already exists")
             return redirect('register')
+        return redirect('hello')
+
+
+class AddComment(View):
+    def post(self, request, id):
+        comment = CommentForm(renderer=request, data=request.POST)
+        if comment.is_valid():
+            new_comment = comment.save(commit=False)
+            new_comment.book_id = id
+            new_comment.user_id = request.user.id
+            new_comment.save()
+            comment.save_m2m()
+        return redirect('hello')
+
+
+class AddNewBook(View):
+    def get(self, request):
+        bf = BookForm()
+        return render(request, "add_new_book.html", {'book_form': bf, 'id': 0})
+
+    def post(self, request):
+        bf = BookForm(renderer=request, data=request.POST)
+        if bf.is_valid():
+            new_book = bf.save(commit=False)
+            new_book.slug = slugify(bf.cleaned_data['title'])
+            new_book.save()
+            bf.save_m2m()
+        return redirect('hello')
+
+
+class UpdateBook(View):
+    def get(self, request, id):
+        book = Book.objects.get(id=id)
+        bf = BookForm(instance=book)
+        return render(request, 'update_book.html', {'book_form': bf, "id": book.id})
+
+    def post(self, request, id):
+        book = Book.objects.get(id=id)
+        f = BookForm(request.POST, instance=book)
+        f.save()
         return redirect('hello')

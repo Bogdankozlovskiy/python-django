@@ -4,7 +4,9 @@
 
 {% block index %}
 <style>.checked {color: orange;}</style>
+
 {% if user.username %}
+    <a href="{% url 'add_new_book' %}">Add a New Book</a>
     <a href="{% url 'logout' %}">logout</a>
 {% else %}
     <a href="{% url 'register' %}">register</a>
@@ -13,6 +15,7 @@
 
 {% for book in content %}
     <h1>{{ book.title }}</h1>
+    {% if user.username %}<a href="{% url 'update_book' id=book.id %}">Update this book</a>{% endif %}
     <h2>{{ book.publish_date }}</h2>
     <i><h5>{{ book.text }}</h5></i>
     <i>Genre: {% for genre in book.genre.all %}
@@ -22,6 +25,7 @@
         {{ user.username }}
     {% endfor %}</i>
     <h4>Rate: {{ book.cached_rate }}</h4>
+    {% if user.username %}
     {% for i in '12345'|make_list %}
         {% if book.user_rate == i %}
             <a href="{% url 'add_rate' id=book.id rate=i %}"><span class="fa fa-star checked">{{ i }}</span></a>
@@ -29,12 +33,20 @@
             <a href="{% url 'add_rate' id=book.id rate=i %}"><span class="fa fa-star">{{ i }}</span></a>
         {% endif %}
     {% endfor %}
+    {% endif %}
     {% for comment in book.comment.all %}
         <h6>{{ comment.text }}</h6>
         <h6>User: {{ comment.user }}</h6>
         <h6>Date: {{ comment.date }}</h6>
         <h6><a href="{% url 'add_comment' id=comment.id %}">Likes: {{ comment.cached_likes }}</a></h6><br>
     {% endfor %}
+    {% if user.username %}
+    <form action="{% url 'add_a_new_comment' id=book.id %}" method="post">
+        {% csrf_token %}
+        {{ comment_form }}
+        <button type="submit" class="btn btn-primary">OK</button>
+    </form>
+    {% endif %}
 <hr>
 {% endfor %}
 
