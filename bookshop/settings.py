@@ -104,12 +104,17 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.googleoauth2'
     'social_core.backends.github.GithubOAuth2',
     'django.contrib.auth.backends.ModelBackend',
 )
 
 SOCIAL_AUTH_GITHUB_KEY = '8e1037cf917dedac3b82'
 SOCIAL_AUTH_GITHUB_SECRET = '07b26f6323c960c5315d7e6654ea2b14e177da00'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = 'dqggsMjfsALO560kl3bLrbTw'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '509808950989-7gt5lo6thg1pf0sndf1adffumb32ip4a.apps.googleusercontent.com'
+
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/shop/hello/'
 
 # Internationalization
