@@ -3,7 +3,6 @@
 {% block title %}Main Page{% endblock %}
 
 {% block index %}
-
 <style>.checked {color: orange;}</style>
 {% if user.username %}
     <a href="{% url 'logout' %}">logout</a>
@@ -11,7 +10,7 @@
     <a href="{% url 'register' %}">register</a>
     <a href="{% url 'login' %}">login</a>
 {% endif %}
-<div class="container">
+
 {% for book in content %}
     <h1>{{ book.title }}</h1>
     <h2>{{ book.publish_date }}</h2>
@@ -38,5 +37,5 @@
     {% endfor %}
 <hr>
 {% endfor %}
-</div>
+
 {% endblock %}

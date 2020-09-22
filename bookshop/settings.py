@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'debug_toolbar',
     'managebook',
+    'social_django'
 ]
 
 MIDDLEWARE = [
@@ -77,6 +78,14 @@ WSGI_APPLICATION = 'bookshop.wsgi.application'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {"default": dj_database_url.parse(os.environ.get("DATABASE_URL"))}
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
+
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
@@ -94,6 +103,14 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.github.GithubOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_GITHUB_KEY = '8e1037cf917dedac3b82'
+SOCIAL_AUTH_GITHUB_SECRET = '07b26f6323c960c5315d7e6654ea2b14e177da00'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/shop/hello/'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/

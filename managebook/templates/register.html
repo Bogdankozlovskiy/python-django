@@ -4,6 +4,8 @@
 
 {% block register %}
 
+<a href="{% url 'social:begin' 'github' %}">GitHub</a>
+
 {% for msg in messages %}
     <li class="{{ msg.tags }}">{{ msg }}</li>
 {% endfor %}
