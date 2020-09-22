@@ -15,7 +15,10 @@
 
 {% for book in content %}
     <h1>{{ book.title }}</h1>
-    {% if user.username %}<a href="{% url 'update_book' id=book.id %}">Update this book</a>{% endif %}
+    {% if user.username %}
+        <a href="{% url 'update_book' id=book.id %}">Update this book</a><br>
+        <a href="{% url 'delete_book' id=book.id %}">Delete this Book</a>
+    {% endif %}
     <h2>{{ book.publish_date }}</h2>
     <i><h5>{{ book.text }}</h5></i>
     <i>Genre: {% for genre in book.genre.all %}

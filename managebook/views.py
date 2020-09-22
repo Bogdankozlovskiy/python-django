@@ -114,3 +114,9 @@ class UpdateBook(View):
         f = BookForm(request.POST, instance=book)
         f.save()
         return redirect('hello')
+
+
+class DeleteBook(View):
+    def get(self, request, id):
+        Book.objects.get(id=id).delete()
+        return redirect('hello')
