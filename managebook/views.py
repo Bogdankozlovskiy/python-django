@@ -99,6 +99,7 @@ class AddNewBook(View):
             new_book = bf.save(commit=False)
             new_book.slug = slugify(bf.cleaned_data['title'])
             new_book.save()
+            new_book.author.add(request.user)
             bf.save_m2m()
         return redirect('hello')
 
