@@ -26,7 +26,7 @@ SECRET_KEY = 'x1o18m1o^sw=#^1-@pk6%0vswhp^!a8bgxim-7t&$efr864j&!'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["bogdan-kozlovsky.herokuapp.com", '127.0.0.1']
+ALLOWED_HOSTS = ["bogdan-kozlovsky.herokuapp.com", '127.0.0.1', 'localhost']
 
 # Application definition
 
@@ -138,3 +138,18 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 INTERNAL_IPS = ['127.0.0.1']
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        "LOCATION": os.path.join(BASE_DIR, "cached"),
+    }
+}
+# loadtest -n 1000 -c 5 http://localhost:8000/shop/hello/
+#                               Sqlite3    postgresql
+# django_redis.cache.RedisCache RPS 66
+# memcached.MemcachedCache      RPS 63
+# locmem.LocMemCache            RPS 68
+# db.DatabaseCache              RPS 23
+# filebased.FileBasedCache      RPS 65
+# without any cache             RPS 9

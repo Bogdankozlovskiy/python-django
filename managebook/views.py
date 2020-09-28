@@ -8,9 +8,13 @@ from django.db.models.functions import Cast
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import logout, authenticate, login
 from django.contrib import messages
+from django.views.decorators.cache import cache_page
+from django.core.cache import cache
+from django.utils.decorators import method_decorator
 
 
 class HelloView(View):
+    @method_decorator(cache_page(5))
     def get(self, request):
         if request.user.is_authenticated:
             q = Q(book_like__user_id=request.user.id)
