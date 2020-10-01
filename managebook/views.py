@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from pytils.translit import slugify
-from managebook.forms import CommentForm, BookForm
+from managebook.forms import CommentForm, BookForm, CustomUserCreationForm, CustomAuthenticationForm
 from managebook.models import Book, BookRate, CommentLike
 from django.views.generic import View
 from django.db.models import F, CharField, Value, Q, Case, When
@@ -52,11 +52,11 @@ class LogoutView(View):
 
 class LoginView(View):
     def get(self, request):
-        form = AuthenticationForm()
+        form = CustomAuthenticationForm()
         return render(request, 'login.html', {'form': form})
 
     def post(self, request):
-        form = AuthenticationForm(request=request, data=request.POST)
+        form = CustomAuthenticationForm(request=request, data=request.POST)
         if form.is_valid():
             login(request, form.get_user())
         else:
@@ -67,11 +67,11 @@ class LoginView(View):
 
 class RegisterView(View):
     def get(self, request):
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
         return render(request, 'register.html', {'form': form})
 
     def post(self, request):
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
         else:

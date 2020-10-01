@@ -77,14 +77,14 @@ WSGI_APPLICATION = 'bookshop.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {"default": dj_database_url.parse(os.environ.get("DATABASE_URL"))}
+# DATABASES = {"default": dj_database_url.parse(os.environ.get("DATABASE_URL"))}
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -146,10 +146,10 @@ CACHES = {
     }
 }
 # loadtest -n 1000 -c 5 http://localhost:8000/shop/hello/
-#                               Sqlite3    postgresql
+#                               Sqlite3    PostgreSQL
 # django_redis.cache.RedisCache RPS 66
 # memcached.MemcachedCache      RPS 63
 # locmem.LocMemCache            RPS 68
-# db.DatabaseCache              RPS 23
+# db.DatabaseCache              RPS 19
 # filebased.FileBasedCache      RPS 65
 # without any cache             RPS 9
