@@ -30,7 +30,7 @@
     <h4>Rate: {{ book.cached_rate }}</h4>
     {% if user.username %}
     {% for i in '12345'|make_list %}
-        {% if book.user_rate == i %}
+        {% if book.user_rate >= i %}
             <a href="{% url 'add_rate' id=book.id rate=i %}"><span class="fa fa-star checked">{{ i }}</span></a>
         {% else %}
             <a href="{% url 'add_rate' id=book.id rate=i %}"><span class="fa fa-star">{{ i }}</span></a>
