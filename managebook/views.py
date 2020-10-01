@@ -27,7 +27,8 @@ class HelloView(View):
                 .union(sub_query)
         else:
             query = Book.objects.prefetch_related('genre', 'author', 'comment__user')
-        return render(request, "index.html", {"content": query.order_by('-publish_date'), "comment_form": CommentForm()})
+        return render(request, "index.html",
+                      {"content": query.order_by('-publish_date'), "comment_form": CommentForm()})
 
 
 class AddCommentLike(View):
@@ -77,7 +78,6 @@ class RegisterView(View):
             return redirect('hello')
         messages.error(request, "this login already exists")
         return redirect('register')
-
 
 
 class AddComment(View):

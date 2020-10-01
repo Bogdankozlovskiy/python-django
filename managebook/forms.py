@@ -1,8 +1,6 @@
 from django.contrib.auth import password_validation
-from django.forms import BaseForm, Form, ModelForm, CharField, Textarea, TextInput, SelectMultiple, SlugField, \
-    PasswordInput
+from django.forms import ModelForm, CharField, Textarea, TextInput, SelectMultiple, PasswordInput
 from managebook.models import Comment, Book
-from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UsernameField
 
 
