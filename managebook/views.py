@@ -74,10 +74,10 @@ class RegisterView(View):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-        else:
-            messages.error(request, "this login already exists")
-            return redirect('register')
-        return redirect('hello')
+            return redirect('hello')
+        messages.error(request, "this login already exists")
+        return redirect('register')
+
 
 
 class AddComment(View):
