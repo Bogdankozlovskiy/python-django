@@ -20,14 +20,14 @@ class HelloView(View):
         if request.user.is_authenticated:
             subquery_1 = BookRate.objects.filter(book=OuterRef("pk"), user=request.user).values("rate")
             subquery_2 = CommentLike.objects.filter(comment=OuterRef("pk"), user=request.user)
-            subquery_3 = Comment.objects.annotate(isliked=Exists(subquery_2)).select_related('user')
-            prefetch = Prefetch("comment", queryset=subquery_3)
-            queryset = Book.objects.annotate(user_rate=Cast(Subquery(subquery_1), CharField())). \
+            queryset = Comment.objects.annotate(isliked=Exists(subquery_2)).select_related('user')
+            prefetch = Prefetch("comment", queryset=queryset)
+            content = Book.objects.annotate(user_rate=Cast(Subquery(subquery_1), CharField())). \
                 prefetch_related('genre', 'author', prefetch)
         else:
-            queryset = Book.objects.prefetch_related('genre', 'author', 'comment__user')
-        queryset = queryset.order_by('-publish_date')
-        return render(request, "index.html",  {"content": queryset, "comment_form": CommentForm()})
+            content = Book.objects.prefetch_related('genre', 'author', 'comment__user')
+        content = content.order_by('-publish_date')
+        return render(request, "index.html", {"content": content, "comment_form": CommentForm()})
 
 
 class AddCommentLike(View):
