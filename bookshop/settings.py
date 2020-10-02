@@ -124,7 +124,7 @@ LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'Europe/Minsk'
 
-USE_I18N = True
+USE_I18N = False
 
 USE_L10N = True
 
