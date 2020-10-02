@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect
 from pytils.translit import slugify
 from managebook.forms import CommentForm, BookForm, CustomUserCreationForm, CustomAuthenticationForm
-from managebook.models import Book, BookRate, CommentLike
+from managebook.models import Book, BookRate, CommentLike, Comment
 from django.views.generic import View
-from django.db.models import F, CharField, Value, Q, Case, When
+from django.db.models import F, CharField, Value, Q, Case, When, OuterRef, Exists, Prefetch
 from django.db.models.functions import Cast
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import logout, authenticate, login
@@ -11,24 +11,23 @@ from django.contrib import messages
 from django.views.decorators.cache import cache_page
 from django.core.cache import cache
 from django.utils.decorators import method_decorator
+from django.db.models import Subquery
 
 
 class HelloView(View):
     @method_decorator(cache_page(5))
     def get(self, request):
         if request.user.is_authenticated:
-            q = Q(book_like__user_id=request.user.id)
-            sub_query = Book.objects.filter(~q) \
-                .annotate(user_rate=Value(0, CharField())) \
-                .prefetch_related('genre', 'author', 'comment__user')
-            query = Book.objects.filter(q) \
-                .annotate(user_rate=Cast("book_like__rate", CharField())) \
-                .prefetch_related('genre', 'author', 'comment__user') \
-                .union(sub_query)
+            subquery_1 = BookRate.objects.filter(book=OuterRef("pk"), user=request.user).values("rate")
+            subquery_2 = CommentLike.objects.filter(comment=OuterRef("pk"), user=request.user)
+            subquery_3 = Comment.objects.annotate(isliked=Exists(subquery_2)).select_related('user')
+            prefetch = Prefetch("comment", queryset=subquery_3)
+            queryset = Book.objects.annotate(user_rate=Cast(Subquery(subquery_1), CharField())). \
+                prefetch_related('genre', 'author', prefetch)
         else:
-            query = Book.objects.prefetch_related('genre', 'author', 'comment__user')
-        return render(request, "index.html",
-                      {"content": query.order_by('-publish_date'), "comment_form": CommentForm()})
+            queryset = Book.objects
+        queryset = queryset.prefetch_related('genre', 'author', 'comment__user').order_by('-publish_date')
+        return render(request, "index.html",  {"content": queryset, "comment_form": CommentForm()})
 
 
 class AddCommentLike(View):
