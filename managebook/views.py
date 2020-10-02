@@ -25,8 +25,8 @@ class HelloView(View):
             queryset = Book.objects.annotate(user_rate=Cast(Subquery(subquery_1), CharField())). \
                 prefetch_related('genre', 'author', prefetch)
         else:
-            queryset = Book.objects
-        queryset = queryset.prefetch_related('genre', 'author', 'comment__user').order_by('-publish_date')
+            queryset = Book.objects.prefetch_related('genre', 'author', 'comment__user')
+        queryset = queryset.order_by('-publish_date')
         return render(request, "index.html",  {"content": queryset, "comment_form": CommentForm()})
 
 
