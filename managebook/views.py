@@ -1,3 +1,4 @@
+from django.http import QueryDict
 from django.shortcuts import render, redirect
 from pytils.translit import slugify
 from managebook.forms import CommentForm, BookForm, CustomUserCreationForm, CustomAuthenticationForm
@@ -14,7 +15,7 @@ from django.http.response import JsonResponse
 
 
 class HelloView(View):
-    @method_decorator(cache_page(5))
+    @method_decorator(cache_page(1))
     def get(self, request):
         if request.user.is_authenticated:
             subquery_1 = BookRate.objects.filter(book=OuterRef("pk"), user=request.user).values("rate")
@@ -125,6 +126,8 @@ class DeleteBook(View):
         return redirect('hello')
 
 
+#               AJAX
+
 class AddAjaxLike(View):
     def post(self, request):
         cl = CommentLike(user=request.user, comment_id=request.POST["comment_id"])
@@ -138,3 +141,14 @@ class AddAjaxRate(View):
         br = BookRate(user=request.user, book_id=data[0], rate=data[1])
         cached_rate = br.save()
         return JsonResponse({"rate": cached_rate, "stars": data[1]})
+
+
+class DeleteAjaxBook(View):
+    def delete(self, request):
+        DELETE = QueryDict(request.body)
+        book = Book.objects.get(id=DELETE['book_id'])
+        flag = False
+        if request.user in book.author.all():
+            flag = True
+        return JsonResponse({"flag": flag, 'slug': book.slug})
+

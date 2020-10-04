@@ -16,7 +16,7 @@ var csrftoken = getCookie('csrftoken');
 
 
 $('document').ready(function(){
-    $('.likes').on('click', function(){
+    $('h6.likes').on('click', function(){
         let comment_id = $(this).attr('id')
         let obj = this
         $.ajax({
@@ -35,7 +35,7 @@ $('document').ready(function(){
         })
     })
 
-    $('.rate').on('click', function(){
+    $('span.rate').on('click', function(){
         let rate_id = $(this).attr("id").slice(4)
         $.ajax({
             url: "/shop/add_ajax_rate/",
@@ -54,4 +54,23 @@ $('document').ready(function(){
             }
         })
     })
+
+    $('button.delete_book').on("click", function(){
+        let book_id = $(this).attr('id')
+        let btn = this
+        $.ajax({
+            url: '/shop/delete_ajax_book/',
+            headers: { 'X-CSRFToken': csrftoken },
+            method: 'delete',
+            data: {'book_id': book_id},
+            success: function(data){
+                if(data['flag']){
+                    $('div#book' + data['slug']).remove()
+                }else{
+                    $(btn).attr('style', 'color:red')
+                }
+            }
+        })
+    })
+
 })

@@ -1,6 +1,6 @@
 from django.urls import path
 from managebook.views import HelloView, AddCommentLike, AddRate, LogoutView, LoginView, RegisterView, AddComment, \
-    AddNewBook, UpdateBook, DeleteBook, AddAjaxLike, AddAjaxRate
+    AddNewBook, UpdateBook, DeleteBook, AddAjaxLike, AddAjaxRate, DeleteAjaxBook
 
 urlpatterns = [
     path('hello/', HelloView.as_view(), name="hello"),
@@ -16,4 +16,5 @@ urlpatterns = [
     ########## AJAX
     path("add_ajax_comment/", AddAjaxLike.as_view()),
     path("add_ajax_rate/", AddAjaxRate.as_view()),
+    path("delete_ajax_book/", DeleteAjaxBook.as_view()),
 ]

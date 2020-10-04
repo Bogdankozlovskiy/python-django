@@ -14,10 +14,11 @@
 {% endif %}
 
 {% for book in content %}
+<div id="book{{ book.slug }}">
     <h1>{{ book.title }}</h1>
     {% if user.username %}
         <a href="{% url 'update_book' id=book.id %}">Update this book</a><br>
-        <a href="{% url 'delete_book' id=book.id %}">Delete this Book</a>
+        <button class="delete_book" id="{{ book.id }}">Delete this Book</button>
     {% endif %}
     <h2>{{ book.publish_date }}</h2>
     <i><h5>{{ book.text }}</h5></i>
@@ -53,6 +54,7 @@
     </form>
     {% endif %}
 <hr>
+</div>
 {% endfor %}
 
 {% endblock %}
