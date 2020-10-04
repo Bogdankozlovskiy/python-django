@@ -31,9 +31,9 @@
     {% if user.username %}
     {% for i in '12345'|make_list %}
         {% if book.user_rate >= i %}
-            <a href="{% url 'add_rate' id=book.id rate=i %}"><span class="fa fa-star checked">{{ i }}</span></a>
+            <span class="rate fa fa-star checked" id="{{ book.id }}/{{ i }}"></span>
         {% else %}
-            <a href="{% url 'add_rate' id=book.id rate=i %}"><span class="fa fa-star">{{ i }}</span></a>
+            <span class="rate fa fa-star" id="{{ book.id }}/{{ i }}"></span>
         {% endif %}
     {% endfor %}
     {% endif %}
@@ -41,8 +41,8 @@
         <h6>{{ comment.text }}</h6>
         <h6>User: {{ comment.user }}</h6>
         <h6>Date: {{ comment.date }}</h6>
-        <h6 class="{% if comment.isliked %}fa fa-star checked{% endif %}">
-            <a href="{% url 'add_comment' id=comment.id %}">Likes: {{ comment.cached_likes }}</a>
+        <h6 class="likes fa {% if comment.isliked %}fa-star checked{% endif %}" id="{{ comment.id }}">
+            Likes: {{ comment.cached_likes }}
         </h6><br>
     {% endfor %}
     {% if user.username %}

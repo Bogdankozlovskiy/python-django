@@ -3,15 +3,14 @@ from pytils.translit import slugify
 from managebook.forms import CommentForm, BookForm, CustomUserCreationForm, CustomAuthenticationForm
 from managebook.models import Book, BookRate, CommentLike, Comment
 from django.views.generic import View
-from django.db.models import F, CharField, Value, Q, Case, When, OuterRef, Exists, Prefetch
+from django.db.models import CharField, OuterRef, Exists, Prefetch
 from django.db.models.functions import Cast
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth import logout, authenticate, login
+from django.contrib.auth import logout, login
 from django.contrib import messages
 from django.views.decorators.cache import cache_page
-from django.core.cache import cache
 from django.utils.decorators import method_decorator
 from django.db.models import Subquery
+from django.http.response import JsonResponse
 
 
 class HelloView(View):
@@ -124,3 +123,18 @@ class DeleteBook(View):
     def get(self, request, id):
         Book.objects.get(id=id).delete()
         return redirect('hello')
+
+
+class AddAjaxLike(View):
+    def post(self, request):
+        cl = CommentLike(user=request.user, comment_id=request.POST["comment_id"])
+        result = cl.save()
+        return JsonResponse({'flag': result[0], "likes": result[1]})
+
+
+class AddAjaxRate(View):
+    def post(self, request):
+        data = request.POST['rate_id'].split('/')
+        br = BookRate(user=request.user, book_id=data[0], rate=data[1])
+        cached_rate = br.save()
+        return JsonResponse({"rate": cached_rate, "stars": data[1]})

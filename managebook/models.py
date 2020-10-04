@@ -64,10 +64,11 @@ class BookRate(models.Model):
         except IntegrityError:
             br = BookRate.objects.get(user=self.user, book=self.book)
             br.rate = self.rate
-            br.save()
+            return br.save()
         else:
             self.book.cached_rate = self.book.book_like.aggregate(avg_rate=Avg("rate"))['avg_rate']
             self.book.save()
+            return self.book.cached_rate
 
 
 class CommentLike(models.Model):
@@ -84,6 +85,8 @@ class CommentLike(models.Model):
             CommentLike.objects.get(user=self.user, comment=self.comment).delete()
             self.comment.cached_likes -= 1
             self.comment.save()
+            return False, self.comment.cached_likes
         else:
             self.comment.cached_likes += 1
             self.comment.save()
+            return True, self.comment.cached_likes
