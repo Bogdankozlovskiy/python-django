@@ -51,7 +51,6 @@ $('document').ready(function(){
                         }else{
                             $('#book' + book_id + "-" + i).attr('class', 'rate fa fa-star')}
                      }
-                console.log(data)
             }
         })
     })
