@@ -1,7 +1,8 @@
 from time import sleep
-from django.test import TestCase
+from django.contrib.auth import login
+from django.test import TestCase, LiveServerTestCase
 from django.urls import reverse
-from managebook.models import Book, BookRate, Comment, CommentLike
+from managebook.models import Book, BookRate, Comment, CommentLike, Genre
 from django.contrib.auth.models import User
 from django.db.models import Avg
 from selenium.webdriver import Chrome
@@ -48,10 +49,26 @@ class TestRateBook(TestCase):
         self.assertEqual(comment.cached_likes, 2)
 
 
-class TestInterface(TestCase):
+class TestInterface(LiveServerTestCase):
+    def setUp(self):
+        self.gnre = Genre.objects.create(title="test_genre")
+        self.user1 = User.objects.create(username="Test1", password='1234')
+        self.user2 = User.objects.create(username='Test2', password='1234')
+        self.user3 = User.objects.create(username="Test3", password='1234')
+        book = Book.objects.create(title="test title", text="test text", slug="test_slug")
+        book.genre.add(self.gnre)
+        book.save()
+        BookRate.objects.create(user=self.user1, book=book, rate=3)
+        BookRate.objects.create(user=self.user2, book=book, rate=4)
+        BookRate.objects.create(user=self.user3, book=book, rate=2)
+        comment = Comment.objects.create(text="test text", book=book, user=self.user1)
+        CommentLike.objects.create(comment=comment, user=self.user1)
+        CommentLike.objects.create(comment=comment, user=self.user2)
+
     def test_ajax_1(self):
         url = reverse("hello")
         driver = Chrome()
-        driver.get(f"http://127.0.0.1:8000{url}")
-        sleep(10)
+        driver.get(f"{self.live_server_url}{url}")
+        obj = driver.find_element_by_xpath("html/body/div[@class='container']")
+        print(obj.text)
 # Create your tests here.
