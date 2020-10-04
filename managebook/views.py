@@ -134,7 +134,7 @@ class AddAjaxLike(View):
 
 class AddAjaxRate(View):
     def post(self, request):
-        data = request.POST['rate_id'].split('/')
+        data = request.POST['rate_id'].replace('book', "").split('-')
         br = BookRate(user=request.user, book_id=data[0], rate=data[1])
         cached_rate = br.save()
         return JsonResponse({"rate": cached_rate, "stars": data[1]})

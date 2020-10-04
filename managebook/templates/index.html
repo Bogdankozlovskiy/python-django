@@ -27,13 +27,13 @@
     <i>Authors:{% for user in book.author.all %}
         {{ user.username }}
     {% endfor %}</i>
-    <h4>Rate: {{ book.cached_rate }}</h4>
+    <h4 id="book_rate{{ book.id }}">Rate: {{ book.cached_rate }}</h4>
     {% if user.username %}
     {% for i in '12345'|make_list %}
         {% if book.user_rate >= i %}
-            <span class="rate fa fa-star checked" id="{{ book.id }}/{{ i }}"></span>
+            <span class="rate fa fa-star checked" id="book{{ book.id }}-{{ i }}"></span>
         {% else %}
-            <span class="rate fa fa-star" id="{{ book.id }}/{{ i }}"></span>
+            <span class="rate fa fa-star" id="book{{ book.id }}-{{ i }}"></span>
         {% endif %}
     {% endfor %}
     {% endif %}

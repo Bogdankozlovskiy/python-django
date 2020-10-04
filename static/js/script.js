@@ -36,13 +36,21 @@ $('document').ready(function(){
     })
 
     $('.rate').on('click', function(){
-        let rate_id = $(this).attr("id")
+        let rate_id = $(this).attr("id").slice(4)
         $.ajax({
             url: "/shop/add_ajax_rate/",
             headers: { 'X-CSRFToken': csrftoken },
             method: 'post',
             data : {"rate_id": rate_id},
             success: function(data){
+                let book_id = rate_id.split('-')[0]
+                $('#book_rate' + book_id).html('Rate: ' + data['rate'])
+                for (let i = 1; i < 6; i++) {
+                        if (i <= data['stars']){
+                            $('#book' + book_id + "-" + i).attr('class', 'rate fa fa-star checked')
+                        }else{
+                            $('#book' + book_id + "-" + i).attr('class', 'rate fa fa-star')}
+                     }
                 console.log(data)
             }
         })
