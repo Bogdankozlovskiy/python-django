@@ -150,5 +150,6 @@ class DeleteAjaxBook(View):
         flag = False
         if request.user in book.author.all():
             flag = True
+            book.delete()
         return JsonResponse({"flag": flag, 'slug': book.slug})
 
