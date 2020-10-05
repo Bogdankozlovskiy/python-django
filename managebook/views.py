@@ -4,7 +4,7 @@ from pytils.translit import slugify
 from managebook.forms import CommentForm, BookForm, CustomUserCreationForm, CustomAuthenticationForm
 from managebook.models import Book, BookRate, CommentLike, Comment
 from django.views.generic import View
-from django.db.models import CharField, OuterRef, Exists, Prefetch, When
+from django.db.models import CharField, OuterRef, Exists, Prefetch
 from django.db.models.functions import Cast
 from django.contrib.auth import logout, login
 from django.contrib import messages
@@ -22,7 +22,7 @@ class HelloView(View):
             subquery_2 = Exists(CommentLike.objects.filter(comment=OuterRef("pk"), user=request.user))
             subquery_3 = Exists(User.objects.filter(book=OuterRef('pk'), id=request.user.id))
             subquery_4 = Exists(User.objects.filter(comment=OuterRef("pk"), id=request.user.id))
-            queryset = Comment.objects.annotate(isliked=subquery_2, is_owner=subquery_4).select_related('user')
+            queryset = Comment.objects.annotate(isliked=subquery_2, is_owner=subquery_4).select_related('user').order_by('date')
             prefetch = Prefetch("comment", queryset=queryset)
             content = Book.objects.annotate(user_rate=Cast(subquery_1, CharField()), is_owner=subquery_3). \
                 prefetch_related('genre', 'author', prefetch)
