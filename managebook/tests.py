@@ -143,5 +143,8 @@ class TestInterface(StaticLiveServerTestCase):
         self.assertEqual(rate.text, "Rate: 3.25")
 
 
+# coverage run --source='.' manage.py test .
+# coverage report
+
 
 
