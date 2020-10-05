@@ -18,3 +18,4 @@ wcwidth==0.2.5
 whitenoise==5.2.0
 social-auth-app-django==4.0.0
 pytils==0.3
+selenium==3.141.0

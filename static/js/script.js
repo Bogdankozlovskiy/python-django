@@ -21,9 +21,8 @@ $('document').ready(function(){
         let obj = this
         $.ajax({
             url: "/shop/add_ajax_comment/",
-            headers: { 'X-CSRFToken': csrftoken },
             method: 'post',
-            data : {"comment_id": comment_id},
+            data : {"comment_id": comment_id, "csrfmiddlewaretoken": csrftoken},
             success: function(data){
                 $(obj).html(" Likes: " + data['likes'])
                 if (data['flag']){
@@ -39,9 +38,8 @@ $('document').ready(function(){
         let rate_id = $(this).attr("id").slice(4)
         $.ajax({
             url: "/shop/add_ajax_rate/",
-            headers: { 'X-CSRFToken': csrftoken },
             method: 'post',
-            data : {"rate_id": rate_id},
+            data : {"rate_id": rate_id, "csrfmiddlewaretoken": csrftoken},
             success: function(data){
                 let book_id = rate_id.split('-')[0]
                 $('#book_rate' + book_id).html('Rate: ' + data['rate'])
@@ -59,10 +57,9 @@ $('document').ready(function(){
         let book_id = $(this).attr('id')
         let btn = this
         $.ajax({
-            url: '/shop/delete_ajax_book/',
+            url: `/shop/delete_ajax_book/${book_id}/`,
             headers: { 'X-CSRFToken': csrftoken },
             method: 'delete',
-            data: {'book_id': book_id},
             success: function(data){
                 if(data['flag']){
                     $('div#book' + data['slug']).remove()
