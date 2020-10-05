@@ -150,4 +150,3 @@ class DeleteAjaxBook(View):
             flag = True
             book.delete()
         return JsonResponse({"flag": flag, 'slug': book.slug})
-
