@@ -92,6 +92,7 @@ class TestInterface(StaticLiveServerTestCase):
         authors = self.driver.\
             find_element_by_xpath("/html/body/div/div[1]/i[3]")
         self.assertEqual(authors.text, f"Authors: {' '.join([i.username for i in self.book.author.all()])}")
+        # got to the register
         self.driver.get(f"{self.live_server_url}/shop/register/")
         user_name = self.driver.find_element_by_xpath("/html/body/div/form/input[2]")
         password1 = self.driver.find_element_by_xpath("/html/body/div/form/input[3]")
@@ -102,6 +103,7 @@ class TestInterface(StaticLiveServerTestCase):
         password2.send_keys("useruser")
         sleep(1)
         submit.submit()
+        # go to the login
         self.driver.get(f"{self.live_server_url}/shop/login/")
         user_name = self.driver.find_element_by_xpath("/html/body/div/form/input[2]")
         password1 = self.driver.find_element_by_xpath("/html/body/div/form/input[3]")
@@ -110,6 +112,7 @@ class TestInterface(StaticLiveServerTestCase):
         password1.send_keys("useruser")
         sleep(1)
         submit.submit()
+        # go to
         star = self.driver.find_element_by_xpath("/html/body/div/div[1]/span[5]")
         sleep(0.5)
         star.click()
@@ -141,8 +144,46 @@ class TestInterface(StaticLiveServerTestCase):
         rate = self.driver. \
             find_element_by_xpath("html/body/div[@class='container']/div[@id='booktest_slug']/h4[@id='book_rate1']")
         self.assertEqual(rate.text, "Rate: 3.25")
-        self.driver.find_element_by_xpath("/html/body/div/div[1]/button").click()
+        self.driver.get(f'{self.live_server_url}/shop/AddNewBook/')
+        sleep(1)
+        text = self.driver.find_element_by_xpath("/html/body/div/form/textarea")
+        sleep(0.5)
+        self.driver.find_element_by_xpath("/html/body/div/form/select/option[text()='test_genre']").click()
+        title = self.driver.find_element_by_xpath("/html/body/div/form/input[2]")
+        text.send_keys("test text test")
+        title.send_keys("test title test")
+        sleep(0.5)
+        self.driver.find_element_by_xpath("/html/body/div/form/button").submit()
+        self.driver.get(f'{self.live_server_url}/shop/update_book/2')
+        sleep(0.5)
+        self.driver.find_element_by_xpath("/html/body/div/form/button").submit()
+        self.driver.find_element_by_xpath("/html/body/div/div[2]/button").click()
+        sleep(0.5)
         self.driver.get(f'{self.live_server_url}/shop/logout/')
+        # go to fall register
+        self.driver.get(f"{self.live_server_url}/shop/register/")
+        user_name = self.driver.find_element_by_xpath("/html/body/div/form/input[2]")
+        password1 = self.driver.find_element_by_xpath("/html/body/div/form/input[3]")
+        password2 = self.driver.find_element_by_xpath("/html/body/div/form/input[4]")
+        submit = self.driver.find_element_by_xpath("/html/body/div/form/button")
+        user_name.send_keys('bogdanbogdan')
+        password1.send_keys("useruser")
+        password2.send_keys("useruser")
+        sleep(1)
+        submit.submit()
+        # go to fall login
+        self.driver.get(f"{self.live_server_url}/shop/login/")
+        user_name = self.driver.find_element_by_xpath("/html/body/div/form/input[2]")
+        password1 = self.driver.find_element_by_xpath("/html/body/div/form/input[3]")
+        submit = self.driver.find_element_by_xpath("/html/body/div/form/button")
+        user_name.send_keys('bogdanbogdan1')
+        password1.send_keys("useruser1")
+        sleep(1)
+        submit.submit()
+        sleep(2)
+
+
+
 
 # coverage run --source='.' manage.py test .
 # coverage report
