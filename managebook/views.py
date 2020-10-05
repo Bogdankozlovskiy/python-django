@@ -142,7 +142,7 @@ class AddAjaxRate(View):
     def post(self, request):
         data = request.POST['rate_id'].replace('book', "").split('-')
         br = BookRate(user=request.user, book_id=data[0], rate=data[1])
-        cached_rate = round(br.save(), 2)
+        cached_rate = str(round(br.save(), 2)).replace('.', ',')
         return JsonResponse({"rate": cached_rate, "stars": data[1]})
 
 
