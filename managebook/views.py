@@ -29,18 +29,18 @@ class HelloView(View):
         return render(request, "index.html", {"content": content, "comment_form": CommentForm()})
 
 
-class AddCommentLike(View):
-    def get(self, request, id):
-        if request.user.is_authenticated:
-            CommentLike.objects.create(user_id=request.user.id, comment_id=id)
-        return redirect("hello")
+# class AddCommentLike(View):
+#     def get(self, request, id):
+#         if request.user.is_authenticated:
+#             CommentLike.objects.create(user_id=request.user.id, comment_id=id)
+#         return redirect("hello")
 
 
-class AddRate(View):
-    def get(self, request, id, rate):
-        if request.user.is_authenticated:
-            BookRate.objects.create(user_id=request.user.id, book_id=id, rate=rate)
-        return redirect("hello")
+# class AddRate(View):
+#     def get(self, request, id, rate):
+#         if request.user.is_authenticated:
+#             BookRate.objects.create(user_id=request.user.id, book_id=id, rate=rate)
+#         return redirect("hello")
 
 
 class LogoutView(View):
@@ -119,10 +119,10 @@ class UpdateBook(View):
         return redirect('hello')
 
 
-class DeleteBook(View):
-    def get(self, request, id):
-        Book.objects.get(id=id).delete()
-        return redirect('hello')
+# class DeleteBook(View):
+#     def get(self, request, id):
+#         Book.objects.get(id=id).delete()
+#         return redirect('hello')
 
 
 #               AJAX

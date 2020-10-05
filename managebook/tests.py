@@ -141,10 +141,12 @@ class TestInterface(StaticLiveServerTestCase):
         rate = self.driver. \
             find_element_by_xpath("html/body/div[@class='container']/div[@id='booktest_slug']/h4[@id='book_rate1']")
         self.assertEqual(rate.text, "Rate: 3.25")
-
+        self.driver.find_element_by_xpath("/html/body/div/div[1]/button").click()
+        self.driver.get(f'{self.live_server_url}/shop/logout/')
 
 # coverage run --source='.' manage.py test .
 # coverage report
+# coverage html
 
 
 
