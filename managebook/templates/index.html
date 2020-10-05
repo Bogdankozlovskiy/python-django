@@ -14,10 +14,9 @@
 {% endif %}
 
 {% for book in content %}
-    {{ book.is_owner }}
 <div id="book{{ book.slug }}">
     <h1>{{ book.title }}</h1>
-    {% if user.username %}
+    {% if user.is_authenticated and book.is_owner %}
         <a href="{% url 'update_book' id=book.id %}">Update this book</a><br>
         <button class="delete_book" id="{{ book.id }}">Delete this Book</button>
     {% endif %}
@@ -30,7 +29,7 @@
         {{ user.username }}
     {% endfor %}</i>
     <h4 id="book_rate{{ book.id }}">Rate: {{ book.cached_rate }}</h4>
-    {% if user.username %}
+    {% if user.is_authenticated %}
     {% for i in '12345'|make_list %}
         {% if book.user_rate >= i %}
             <span class="rate fa fa-star checked" id="book{{ book.id }}-{{ i }}"></span>
@@ -48,7 +47,7 @@
             Likes: {{ comment.cached_likes }}
         </h6><br>
     {% endfor %}
-    {% if user.username %}
+    {% if user.is_authenticated %}
     <form action="{% url 'add_a_new_comment' id=book.id %}" method="post">
         {% csrf_token %}
         {{ comment_form }}

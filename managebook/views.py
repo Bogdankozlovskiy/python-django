@@ -22,7 +22,8 @@ class HelloView(View):
             subquery_2 = Exists(CommentLike.objects.filter(comment=OuterRef("pk"), user=request.user))
             subquery_3 = Exists(User.objects.filter(book=OuterRef('pk'), id=request.user.id))
             subquery_4 = Exists(User.objects.filter(comment=OuterRef("pk"), id=request.user.id))
-            queryset = Comment.objects.annotate(isliked=subquery_2, is_owner=subquery_4).select_related('user').order_by('date')
+            queryset = Comment.objects.annotate(isliked=subquery_2, is_owner=subquery_4)\
+                .select_related('user').order_by('date')
             prefetch = Prefetch("comment", queryset=queryset)
             content = Book.objects.annotate(user_rate=Cast(subquery_1, CharField()), is_owner=subquery_3). \
                 prefetch_related('genre', 'author', prefetch)
