@@ -28,7 +28,7 @@ class Book(models.Model):
     )
     slug: str = models.SlugField(unique=True, verbose_name="Слаг")
     text: str = models.TextField(verbose_name="текст")
-    author: User = models.ManyToManyField(User, verbose_name="автор", db_index=True)
+    author: User = models.ManyToManyField(User, verbose_name="автор", db_index=True, related_name="book")
     publish_date: datetime = models.DateField(auto_now_add=True, verbose_name="дата публикации")
     genre = models.ManyToManyField("managebook.Genre", verbose_name="жанр")
     rate = models.ManyToManyField(User, through="managebook.BookRate", related_name="user")

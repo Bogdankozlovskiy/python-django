@@ -1,9 +1,10 @@
+from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from pytils.translit import slugify
 from managebook.forms import CommentForm, BookForm, CustomUserCreationForm, CustomAuthenticationForm
 from managebook.models import Book, BookRate, CommentLike, Comment
 from django.views.generic import View
-from django.db.models import CharField, OuterRef, Exists, Prefetch
+from django.db.models import CharField, OuterRef, Exists, Prefetch, When
 from django.db.models.functions import Cast
 from django.contrib.auth import logout, login
 from django.contrib import messages
@@ -17,11 +18,13 @@ class HelloView(View):
     @method_decorator(cache_page(1))
     def get(self, request):
         if request.user.is_authenticated:
-            subquery_1 = BookRate.objects.filter(book=OuterRef("pk"), user=request.user).values("rate")
-            subquery_2 = CommentLike.objects.filter(comment=OuterRef("pk"), user=request.user)
-            queryset = Comment.objects.annotate(isliked=Exists(subquery_2)).select_related('user')
+            subquery_1 = Subquery(BookRate.objects.filter(book=OuterRef("pk"), user=request.user).values("rate"))
+            subquery_2 = Exists(CommentLike.objects.filter(comment=OuterRef("pk"), user=request.user))
+            subquery_3 = Exists(User.objects.filter(book=OuterRef('pk'), id=request.user.id))
+            subquery_4 = Exists(User.objects.filter(comment=OuterRef("pk"), id=request.user.id))
+            queryset = Comment.objects.annotate(isliked=subquery_2, is_owner=subquery_4).select_related('user')
             prefetch = Prefetch("comment", queryset=queryset)
-            content = Book.objects.annotate(user_rate=Cast(Subquery(subquery_1), CharField())). \
+            content = Book.objects.annotate(user_rate=Cast(subquery_1, CharField()), is_owner=subquery_3). \
                 prefetch_related('genre', 'author', prefetch)
         else:
             content = Book.objects.prefetch_related('genre', 'author', 'comment__user')

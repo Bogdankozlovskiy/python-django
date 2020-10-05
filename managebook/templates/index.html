@@ -14,6 +14,7 @@
 {% endif %}
 
 {% for book in content %}
+    {{ book.is_owner }}
 <div id="book{{ book.slug }}">
     <h1>{{ book.title }}</h1>
     {% if user.username %}
@@ -40,6 +41,7 @@
     {% endif %}
     {% for comment in book.comment.all %}
         <h6>{{ comment.text }}</h6>
+        {{ comment.is_owner }}
         <h6>User: {{ comment.user }}</h6>
         <h6>Date: {{ comment.date }}</h6>
         <h6 class="likes fa {% if comment.isliked %}fa-star checked{% endif %}" id="{{ comment.id }}">
