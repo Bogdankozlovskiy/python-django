@@ -24,7 +24,7 @@ $('document').ready(function(){
             method: 'post',
             data : {"comment_id": comment_id, "csrfmiddlewaretoken": csrftoken},
             success: function(data){
-                $(obj).html(" Likes: " + data['likes'])
+                $(obj).html(` Likes: ${data['likes']}`)
                 if (data['flag']){
                     $(obj).attr('class', 'rate fa fa-star checked')
                 }else{
@@ -42,12 +42,12 @@ $('document').ready(function(){
             data : {"rate_id": rate_id, "csrfmiddlewaretoken": csrftoken},
             success: function(data){
                 let book_id = rate_id.split('-')[0]
-                $('#book_rate' + book_id).html('Rate: ' + data['rate'])
+                $(`#book_rate${book_id}`).html(`Rate: ${data['rate']}`)
                 for (let i = 1; i < 6; i++) {
                         if (i <= data['stars']){
-                            $('#book' + book_id + "-" + i).attr('class', 'rate fa fa-star checked')
+                            $(`#book${book_id}-${i}`).attr('class', 'rate fa fa-star checked')
                         }else{
-                            $('#book' + book_id + "-" + i).attr('class', 'rate fa fa-star')}
+                            $(`#book${book_id}-${i}`).attr('class', 'rate fa fa-star')}
                      }
             }
         })
@@ -55,19 +55,25 @@ $('document').ready(function(){
 
     $('button.delete_book').on("click", function(){
         let book_id = $(this).attr('id')
-        let btn = this
         $.ajax({
             url: `/shop/delete_ajax_book/${book_id}/`,
             headers: { 'X-CSRFToken': csrftoken },
             method: 'delete',
             success: function(data){
-                if(data['flag']){
-                    $('div#book' + data['slug']).remove()
-                }else{
-                    $(btn).attr('style', 'color:red')
-                }
+                    $(`div#book${data['slug']}`).remove()
             }
         })
     })
 
+    $('button.delete-comment').on('click', function(){
+        let comment_id = $(this).attr('id').split('-')[2]
+        $.ajax({
+            url: `/shop/delete_ajax_comment/${comment_id}/`,
+            headers: { 'X-CSRFToken': csrftoken },
+            method: 'delete',
+            success: function(data){
+                if(data['delete']){$(`div#comment-container-${comment_id}`).remove()}
+            }
+        })
+    })
 })

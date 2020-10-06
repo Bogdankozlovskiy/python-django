@@ -12,6 +12,7 @@ from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 from django.db.models import Subquery
 from django.http.response import JsonResponse
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class HelloView(View):
@@ -22,7 +23,7 @@ class HelloView(View):
             subquery_2 = Exists(CommentLike.objects.filter(comment=OuterRef("pk"), user=request.user))
             subquery_3 = Exists(User.objects.filter(book=OuterRef('pk'), id=request.user.id))
             subquery_4 = Exists(User.objects.filter(comment=OuterRef("pk"), id=request.user.id))
-            queryset = Comment.objects.annotate(isliked=subquery_2, is_owner=subquery_4)\
+            queryset = Comment.objects.annotate(isliked=subquery_2, is_owner=subquery_4) \
                 .select_related('user').order_by('date')
             prefetch = Prefetch("comment", queryset=queryset)
             content = Book.objects.annotate(user_rate=Cast(subquery_1, CharField()), is_owner=subquery_3). \
@@ -149,8 +150,16 @@ class AddAjaxRate(View):
 class DeleteAjaxBook(View):
     def delete(self, request, book_id):
         book = Book.objects.get(id=book_id)
-        flag = False
         if request.user in book.author.all():
-            flag = True
             book.delete()
-        return JsonResponse({"flag": flag, 'slug': book.slug})
+        return JsonResponse({'slug': book.slug})
+
+
+class DeleteAjaxComment(View):
+    def delete(self, request, comment_id):
+        try:
+            Comment.objects.get(id=comment_id, user=request.user).delete()
+        except ObjectDoesNotExist:
+            return JsonResponse({'delete': False})
+        else:
+            return JsonResponse({'delete': True})
