@@ -1,6 +1,5 @@
 from datetime import datetime
 from time import sleep
-
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.test import TestCase, LiveServerTestCase
 from django.urls import reverse
@@ -15,6 +14,8 @@ class TestRateBook(TestCase):
         self.user1 = User.objects.create(username="Test1")
         self.user2 = User.objects.create(username='Test2')
         self.user3 = User.objects.create(username="Test3")
+        Genre.objects.create(title="test Genre")
+        Genre.objects.create(title="test20 Genre1")
 
     def test_rate(self):
         book = Book.objects.create(title="test title", text="test text", slug="test slug")
@@ -50,6 +51,45 @@ class TestRateBook(TestCase):
         CommentLike.objects.create(comment=comment, user=self.user2)
         self.assertEqual(comment.cached_likes, 2)
 
+    def test_add_CRUD_book(self):
+        self.client.force_login(self.user1)
+        url = reverse("add_new_book")
+        response = self.client.post(url, data={
+            'text': 'test text for this book',
+            'genre': ['1', '2'],
+            'title': 'test title'
+        })
+        self.assertEqual(response.status_code, 302)
+        book = Book.objects.all().first()
+        self.assertEqual(book.id, 1)
+        url = reverse("update_book", args=['1'])
+        response = self.client.post(url, data={
+            'text': 'test text for this book',
+            'genre': ['1'],
+            'title': 'test title'
+        })
+        self.assertEqual(response.status_code, 302)
+        book_genre_count = Book.objects.all().first().genre.count()
+        self.assertEqual(book_genre_count, 1)
+        url = reverse("delete_book", args=['1'])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+        count = Book.objects.all().count()
+        self.assertEqual(count, 0)
+
+    def test_comment_like_book_rate(self):
+        self.client.force_login(self.user1)
+        book = Book.objects.create(title="test title", text="test text", slug="test slug")
+        comment = Comment.objects.create(text="test text", book=book, user=self.user1)
+        response = self.client.get(reverse('add_rate', args=['1', '5']))
+        self.assertEqual(response.status_code, 302)
+        book.refresh_from_db()
+        self.assertEqual(book.cached_rate, 5)
+        response = self.client.get(reverse('add_comment', args=['1']))
+        self.assertEqual(response.status_code, 302)
+        comment.refresh_from_db()
+        self.assertEqual(comment.cached_likes, 1)
+
 
 class TestInterface(StaticLiveServerTestCase):
     def setUp(self):
@@ -73,23 +113,23 @@ class TestInterface(StaticLiveServerTestCase):
 
     def test_ajax_rate(self):
         self.driver.get(f"{self.live_server_url}{self.url}")
-        rate = self.driver.\
+        rate = self.driver. \
             find_element_by_xpath("html/body/div[@class='container']/div[@id='booktest_slug']/h4[@id='book_rate1']")
         self.assertEqual(rate.text, "Rate: 3,00")
-        text = self.driver.\
+        text = self.driver. \
             find_element_by_xpath("html/body/div[@class='container']/div[@id='booktest_slug']/i/h5")
         self.assertEqual(text.text, self.book.text)
-        title = self.driver.\
+        title = self.driver. \
             find_element_by_xpath("html/body/div[@class='container']/div[@id='booktest_slug']/h1")
         self.assertEqual(title.text, self.book.title)
-        publish_date = self.driver.\
+        publish_date = self.driver. \
             find_element_by_xpath("html/body/div[@class='container']/div[@id='booktest_slug']/h2")
         d = self.book.publish_date
         self.assertEqual(datetime.strptime(publish_date.text, "%d %B %Y г."), datetime(d.year, d.month, d.day))
-        genre = self.driver.\
+        genre = self.driver. \
             find_element_by_xpath("/html/body/div/div[1]/i[2]")
         self.assertEqual(genre.text, f"Genre: {' '.join([i.title for i in self.book.genre.all()])}")
-        authors = self.driver.\
+        authors = self.driver. \
             find_element_by_xpath("/html/body/div/div[1]/i[3]")
         self.assertEqual(authors.text, f"Authors: {' '.join([i.username for i in self.book.author.all()])}")
         # got to the register
@@ -159,6 +199,8 @@ class TestInterface(StaticLiveServerTestCase):
         self.driver.find_element_by_xpath("/html/body/div/form/button").submit()
         self.driver.find_element_by_xpath("/html/body/div/div[2]/button").click()
         sleep(0.5)
+        self.driver.find_element_by_xpath("/html/body/div/div/div[2]/button").click()
+        sleep(0.5)
         self.driver.get(f'{self.live_server_url}/shop/logout/')
         # go to fall register
         self.driver.get(f"{self.live_server_url}/shop/register/")
@@ -180,14 +222,8 @@ class TestInterface(StaticLiveServerTestCase):
         password1.send_keys("useruser1")
         sleep(1)
         submit.submit()
-        sleep(2)
-
-
-
+        sleep(1)
 
 # coverage run --source='.' manage.py test .
 # coverage report
 # coverage html
-
-
-

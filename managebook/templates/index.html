@@ -41,7 +41,6 @@
     {% for comment in book.comment.all %}
     <div id="comment-container-{{ comment.id }}">
         <h6>{{ comment.text }}</h6>
-        {{ comment.is_owner }}
         <h6>User: {{ comment.user }}</h6>
         <h6>Date: {{ comment.date }}</h6>
         <h6 class="likes fa {% if comment.isliked %}fa-star checked{% endif %}" id="{{ comment.id }}">
