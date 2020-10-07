@@ -134,9 +134,11 @@ class DeleteBook(View):
 
 class AddAjaxLike(View):
     def post(self, request):
-        cl = CommentLike(user=request.user, comment_id=request.POST["comment_id"])
-        result = cl.save()
-        return JsonResponse({'flag': result[0], "likes": result[1], 'username': request.user.username}, status=202)
+        if request.user.is_authenticated:
+            cl = CommentLike(user=request.user, comment_id=request.POST["comment_id"])
+            result = cl.save()
+            return JsonResponse({'flag': result[0], "likes": result[1], 'username': request.user.username}, status=202)
+        return JsonResponse({})
 
 
 class AddAjaxRate(View):
