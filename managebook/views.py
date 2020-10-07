@@ -24,7 +24,7 @@ class HelloView(View):
             subquery_3 = Exists(User.objects.filter(book=OuterRef('pk'), id=request.user.id))
             subquery_4 = Exists(User.objects.filter(comment=OuterRef("pk"), id=request.user.id))
             queryset = Comment.objects.annotate(isliked=subquery_2, is_owner=subquery_4) \
-                .select_related('user').order_by('date')
+                .select_related('user').prefetch_related('like').order_by('date')
             prefetch = Prefetch("comment", queryset=queryset)
             content = Book.objects.annotate(user_rate=Cast(subquery_1, CharField()), is_owner=subquery_3). \
                 prefetch_related('genre', 'author', prefetch)
@@ -136,7 +136,7 @@ class AddAjaxLike(View):
     def post(self, request):
         cl = CommentLike(user=request.user, comment_id=request.POST["comment_id"])
         result = cl.save()
-        return JsonResponse({'flag': result[0], "likes": result[1]}, status=202)
+        return JsonResponse({'flag': result[0], "likes": result[1], 'username': request.user.username}, status=202)
 
 
 class AddAjaxRate(View):

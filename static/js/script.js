@@ -24,11 +24,21 @@ $('document').ready(function(){
             method: 'post',
             data : {"comment_id": comment_id, "csrfmiddlewaretoken": csrftoken},
             success: function(data){
-                $(obj).html(` Likes: ${data['likes']}`)
+                obj0 = $(obj).children()[0]
+                $(obj0).html(` Likes: ${data['likes']}`)
                 if (data['flag']){
                     $(obj).attr('class', 'rate fa fa-star checked')
+                    $(obj).append(`<span class='col'>${data['username']}</span>`)
                 }else{
                     $(obj).attr('class', 'rate fa')
+                    let children = $(obj).children()
+                    for(let i = 0; i < children.length; i++){
+                        item = children[i]
+                        if($(item).html() == data['username']){
+                            $(item).remove()
+                            break
+                        }
+                    }
                 }
             }
         })

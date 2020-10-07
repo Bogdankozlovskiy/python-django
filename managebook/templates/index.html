@@ -44,7 +44,11 @@
         <h6>User: {{ comment.user }}</h6>
         <h6>Date: {{ comment.date }}</h6>
         <h6 class="likes fa {% if comment.isliked %}fa-star checked{% endif %}" id="{{ comment.id }}">
-            Likes: {{ comment.cached_likes }}
+            <span>Likes: {{ comment.cached_likes }}</span>
+            it liked:
+            <tr>{% for u in comment.like.all %}
+                <span class="col">{{ u.username }}</span>
+                {% endfor %}</tr>
         </h6><br>
     {% if comment.is_owner %}<button class="delete-comment" id="delete-comment-{{ comment.id }}">delete comment</button>{% endif %}
     </div>
