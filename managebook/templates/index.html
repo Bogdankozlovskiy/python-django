@@ -43,8 +43,8 @@
         <h6>{{ comment.text }}</h6>
         <h6>User: {{ comment.user }}</h6>
         <h6>Date: {{ comment.date }}</h6>
-        <h6 class="likes fa {% if comment.isliked %}fa-star checked{% endif %}" id="{{ comment.id }}">
-            <span>Likes: {{ comment.cached_likes }}</span>
+        <h6 id="{{ comment.id }}">
+            <span class="likes fa {% if comment.isliked %}fa-star checked{% endif %}">Likes: {{ comment.cached_likes }}</span>
             it liked:
             <tr>{% for u in comment.like.all %}
                 <span class="col">{{ u.username }}</span>

@@ -16,9 +16,10 @@ var csrftoken = getCookie('csrftoken');
 
 
 $('document').ready(function(){
-    $('h6.likes').on('click', function(){
-        let comment_id = $(this).attr('id')
-        let obj = this
+    $('span.likes').on('click', function(){
+        let comment_id = $(this).parent().attr('id')
+        let obj_span = this
+        let obj = $(this).parent()
         $.ajax({
             url: "/shop/add_ajax_comment/",
             method: 'post',
@@ -27,10 +28,10 @@ $('document').ready(function(){
                 obj0 = $(obj).children()[0]
                 $(obj0).html(` Likes: ${data['likes']}`)
                 if (data['flag']){
-                    $(obj).attr('class', 'rate fa fa-star checked')
+                    $(obj_span).attr('class', 'rate fa fa-star checked')
                     $(obj).append(`<span class='col'>${data['username']}</span>`)
                 }else{
-                    $(obj).attr('class', 'rate fa')
+                    $(obj_span).attr('class', 'rate fa')
                     let children = $(obj).children()
                     for(let i = 0; i < children.length; i++){
                         item = children[i]
