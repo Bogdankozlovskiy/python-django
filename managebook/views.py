@@ -13,11 +13,12 @@ from django.utils.decorators import method_decorator
 from django.db.models import Subquery
 from django.http.response import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator
 
 
 class HelloView(View):
     @method_decorator(cache_page(1))
-    def get(self, request):
+    def get(self, request, page_id=1):
         if request.user.is_authenticated:
             subquery_1 = Subquery(BookRate.objects.filter(book=OuterRef("pk"), user=request.user).values("rate"))
             subquery_2 = Exists(CommentLike.objects.filter(comment=OuterRef("pk"), user=request.user))
@@ -31,7 +32,9 @@ class HelloView(View):
         else:
             content = Book.objects.prefetch_related('genre', 'author', 'comment__user')
         content = content.order_by('-publish_date')
-        return render(request, "index.html", {"content": content, "comment_form": CommentForm()})
+        p = Paginator(content, 5)
+        context = {"content": p.page(page_id), "comment_form": CommentForm(), "num_pages": range(1, p.num_pages + 1)}
+        return render(request, "index.html", context)
 
 
 class AddCommentLike(View):

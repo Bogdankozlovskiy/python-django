@@ -169,7 +169,7 @@ class TestInterface(StaticLiveServerTestCase):
         like1 = self.driver.find_element_by_xpath("/html/body/div/div/div[1]/h6[4]")
         like2 = self.driver.find_element_by_xpath("/html/body/div/div/div[2]/h6[4]")
         self.comment.refresh_from_db()
-        self.assertEqual(like1.text, f"Likes: {self.comment.cached_likes}")
+        self.assertEqual(like1.text, f"Likes: {self.comment.cached_likes} it liked: {self.user1.username} {self.user2.username}")
         cl_before = like2.get_attribute("class")
         self.assertEqual(cl_before, like1.get_attribute("class"))
         like2.click()

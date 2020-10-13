@@ -3,6 +3,9 @@
 {% block title %}Main Page{% endblock %}
 
 {% block index %}
+{% for page in num_pages %}
+<a href="{% url 'hello' page_id=page %}">page {{ page }}</a>
+{% endfor %}<br>
 <style>.checked {color: orange;}</style>
 
 {% if user.username %}
