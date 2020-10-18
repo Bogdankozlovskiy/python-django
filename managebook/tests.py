@@ -91,7 +91,7 @@ class TestRateBook(TestCase):
         self.assertEqual(comment.cached_likes, 1)
 
 
-class TestInterface(StaticLiveServerTestCase):
+'''class TestInterface(StaticLiveServerTestCase):
     def setUp(self):
         self.gnre = Genre.objects.create(title="test_genre")
         self.user1 = User.objects.create(username="Test1", password='1234')
@@ -222,7 +222,7 @@ class TestInterface(StaticLiveServerTestCase):
         password1.send_keys("useruser1")
         sleep(1)
         submit.submit()
-        sleep(1)
+        sleep(1)'''
 
 # coverage run --source='.' manage.py test .
 # coverage report
